@@ -1,3 +1,5 @@
+<?php
+
 /**
  * FMI API
  * Read the temperature and the time from file
