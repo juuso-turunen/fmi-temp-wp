@@ -18,7 +18,7 @@ function read_fmi_file_87290($atts) {
 		// Date/Time is wanted
 		if (in_array('datetime', $atts) || isset($atts['datetime'])) {
 			$datetime = DateTimeImmutable::createFromFormat(
-				DateTimeInterface::ISO8601,
+				DateTimeInterface::ATOM,
 				$obj->time
 			);
 
@@ -34,7 +34,7 @@ function read_fmi_file_87290($atts) {
 				$formatted_datetime = $datetime->format('h.i');
 			}
 
-			return '<span class="fmi-11am-time" data-time="' . $datetime->format(DateTimeInterface::ISO8601) . '">' . esc_html($formatted_datetime) . '</span>';
+			return '<span class="fmi-11am-time" data-time="' . $datetime->format(DateTimeInterface::ATOM) . '">' . esc_html($formatted_datetime) . '</span>';
 		}
 
 		// Temperature is wanted
