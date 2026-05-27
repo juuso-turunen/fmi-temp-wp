@@ -15,11 +15,16 @@ function read_fmi_file_87290($atts) {
     if (file_exists($file_path)) {
         $obj = json_decode(trim(file_get_contents($file_path)));
 
+		$preciseTemperature = $obj->temp;
+		$temperature = ceil($preciseTemperature);
+		$price = 35 - $temperature;
+		$measurementTime = $obj->time;
+
 		// Date/Time is wanted
 		if (in_array('datetime', $atts) || isset($atts['datetime'])) {
 			$datetime = DateTimeImmutable::createFromFormat(
 				DateTimeInterface::ATOM,
-				$obj->time
+				$measurementTime
 			);
 
 			$datetime = $datetime->setTimezone(new DateTimeZone('Europe/Helsinki'));
@@ -34,22 +39,21 @@ function read_fmi_file_87290($atts) {
 				$formatted_datetime = $datetime->format('h.i');
 			}
 
-			return '<span class="fmi-11am-time" data-time="' . $datetime->format(DateTimeInterface::ATOM) . '">' . esc_html($formatted_datetime) . '</span>';
+			return '<span class="measurement-time" data-time="' . $datetime->format(DateTimeInterface::ATOM) . '">' . esc_html($formatted_datetime) . '</span>';
 		}
 
 		// Temperature is wanted
 		if (in_array('temp', $atts)) {
-			$formatted_temp = number_format($obj->temp, 1, decimal_separator: ",");
+			$formatted_temp = number_format($temperature, 0);
 
-			return '<span class="fmi-11am-temp">' . esc_html($formatted_temp) . ' °C</span>';
+			return '<span data-temperature="' . esc_attr($preciseTemperature) . '" class="measurement-temperature">' . esc_html($formatted_temp) . ' °C</span>';
 		}
 
 		// Price is wanted
 		if (in_array('price', $atts)) {
-			$price = 35 - $obj->temp;
-			$formatted_price = number_format($price, 2, decimal_separator: ",");
+			$formatted_price = number_format($price, 0);
 
-			return '<span class="fmi-11am-price">' . esc_html($formatted_price) . ' €</span>';
+			return '<span class="measurement-price">' . esc_html($formatted_price) . ' €</span>';
 		}
 
 		return;
@@ -57,3 +61,5 @@ function read_fmi_file_87290($atts) {
 
     return '--';
 }
+
+/* */
