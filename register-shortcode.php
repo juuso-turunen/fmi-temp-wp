@@ -15,16 +15,16 @@ function read_fmi_file_87290($atts) {
     if (file_exists($file_path)) {
         $obj = json_decode(trim(file_get_contents($file_path)));
 
-		$preciseTemperature = $obj->temp;
-		$temperature = ceil($preciseTemperature);
-		$price = 35 - $temperature;
-		$measurementTime = $obj->time;
+		$temperature = $obj->temp;
+		$rounded_temperature = ceil($temperature);
+		$price = 35 - $rounded_temperature;
+		$measurement_time = $obj->time;
 
 		// Date/Time is wanted
 		if (in_array('datetime', $atts) || isset($atts['datetime'])) {
 			$datetime = DateTimeImmutable::createFromFormat(
 				DateTimeInterface::ATOM,
-				$measurementTime
+				$measurement_time
 			);
 
 			$datetime = $datetime->setTimezone(new DateTimeZone('Europe/Helsinki'));
@@ -44,9 +44,9 @@ function read_fmi_file_87290($atts) {
 
 		// Temperature is wanted
 		if (in_array('temp', $atts)) {
-			$formatted_temp = number_format($temperature, 0);
+			$formatted_temperature = number_format($rounded_temperature, 0);
 
-			return '<span data-temperature="' . esc_attr($preciseTemperature) . '" class="measurement-temperature">' . esc_html($formatted_temp) . ' °C</span>';
+			return '<span data-temperature="' . esc_attr($temperature) . '" class="measurement-temperature">' . esc_html($formatted_temperature) . ' °C</span>';
 		}
 
 		// Price is wanted
